@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="Horizon - Your Simple Politics Dashboard Buddy" name="description">
+    <meta content="politics, dashboard" name="keywords">
+    <meta content="Group 2 IF5270 Course: Arief Purnama Muharram,  Danendra Athallariq Harya Putra, and Debora Eirene Hariyati"
+          name="author">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <title>Horizon - Your Simple Politics Dashboard Buddy</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Bootstrap css -->
+    <link href="vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+
+    <!-- FontAwesome -->
+    <link href="vendors/fontawesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom style -->
+    <link href="assets/css/app.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg shadow-sm bg-white">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="assets/images/logo-horizon.svg" alt="Horizon" height="54">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                <a class="nav-link" aria-current="page" href="#">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Body -->
+<div class="page-container">
+    <div class="container content-wrap mt-4">
+        <div style="margin-top: 54px;">
+            <hr>
+            <span class="fw-bold" style="color: #680507;">YOUTUBE SENTIMENT HORIZON</span>
+            <hr>
+            <div class="row">
+                <div class="col-md-3 py-2">
+                    <div class="d-flex justify-content-center">
+                        <canvas id="chart1"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-3 py-2">
+                    <div class="d-flex justify-content-center">
+                        <canvas id="chart2"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-3 py-2">
+                    <div class="d-flex justify-content-center">
+                        <canvas id="chart3"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-3 py-2">
+                    <div class="d-flex justify-content-center">
+                        <canvas id="chart4"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-4">
+                <span class="text-secondary" style="font-size: 0.75em;">Last update: Mar 21<sup>st</sup>, 2023 07:00 AM</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="bg-dark" style="background-color: #680507!important;">
+            <div class="container content text-start">
+                <span class="font-sm text-white">&copy; Copyright 2023 Group 2 IF5270 Course Project, School of Electrical Engineering and Informatics, Institut Teknologi Bandung. All rights reserved</span>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- jQuery -->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+
+<!-- Bootstrap js -->
+<script src="vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom script -->
+<script type="text/javascript">
+    const chart1 = document.getElementById('chart1');
+    const chart2 = document.getElementById('chart2');
+    const chart3 = document.getElementById('chart3');
+    const chart4 = document.getElementById('chart4');
+
+    const chartType = 'doughnut'
+
+    const chartLegend = {
+        position: 'bottom',
+        labels: {
+            padding: 24
+        }
+    }
+
+    function createData(data) {
+        return {
+            labels: [
+                'Positive',
+                'Negative',
+            ],
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    'rgb(76, 187, 23)',
+                    'rgb(191, 10, 48)',
+                ],
+                hoverOffset: 0
+            }]
+        };
+    }
+
+    function customCanvasBackgroundImage(src) {
+        const image = new Image();
+        image.src = src;
+
+        return {
+            id: 'customCanvasBackgroundImage',
+            beforeDraw: (chart) => {
+                if (image.complete) {
+                    const ctx = chart.ctx;
+                    const {top, left, width, height} = chart.chartArea;
+                    const x = left + width / 2 - image.width / 2;
+                    const y = top + height / 2 - image.height / 2;
+                    ctx.drawImage(image, x, y);
+                } else {
+                    image.onload = () => chart.draw();
+                }
+            }
+        };
+    }
+
+    function drawChart(chartID, data, srcImage) {
+        new Chart(chartID, {
+            type: chartType,
+            data: data,
+            options: {
+                plugins: {
+                    legend: chartLegend,
+                },
+            },
+            plugins: [customCanvasBackgroundImage(srcImage)]
+        });
+    }
+
+    // Draw charts
+    drawChart(chart1, createData([0.6, 0.4]), 'assets/images/bg-chart-prabowo.svg')
+    drawChart(chart2, createData([0.3, 0.7]), 'assets/images/bg-chart-anies.svg')
+    drawChart(chart3, createData([0.9, 0.1]), 'assets/images/bg-chart-ganjar.svg')
+    drawChart(chart4, createData([0.5, 0.5]), 'assets/images/bg-chart-puan.svg')
+</script>
+</body>
+
+</html>
