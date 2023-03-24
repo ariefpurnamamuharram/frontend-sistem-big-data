@@ -80,7 +80,8 @@
                 </div>
             </div>
             <div class="row pt-4">
-                <span class="text-secondary" style="font-size: 0.75em;">Last update: Mar 21<sup>st</sup>, 2023 07:00 AM</span>
+                <span id="last-update" class="text-secondary"
+                      style="font-size: 0.75em;">Last update: N/A</span>
             </div>
         </div>
     </div>
@@ -167,11 +168,35 @@
         });
     }
 
-    // Draw charts
-    drawChart(chart1, createData([0.6, 0.4]), 'assets/images/bg-chart-prabowo.svg')
-    drawChart(chart2, createData([0.3, 0.7]), 'assets/images/bg-chart-anies.svg')
-    drawChart(chart3, createData([0.9, 0.1]), 'assets/images/bg-chart-ganjar.svg')
-    drawChart(chart4, createData([0.5, 0.5]), 'assets/images/bg-chart-puan.svg')
+    $(document).ready(function () {
+        $.ajax({
+            url: 'http://localhost:8844/api/v1/sentiments',
+            type: 'GET',
+            success: function (data) {
+                // Get data
+                const sentiments = data['sentiments']
+                const sentimentPrabowo = [sentiments['prabowo']['positive'], sentiments['prabowo']['negative']]
+                const sentimentAnies = [sentiments['anies']['positive'], sentiments['anies']['negative']]
+                const sentimentGanjar = [sentiments['ganjar']['positive'], sentiments['ganjar']['negative']]
+                const sentimentPuan = [sentiments['puan']['positive'], sentiments['puan']['negative']]
+
+                // Draw charts
+                $('#last-update').text('Last update: ' + data['formattedTime'])
+                drawChart(chart1, createData(sentimentPrabowo), 'assets/images/bg-chart-prabowo.svg')
+                drawChart(chart2, createData(sentimentAnies), 'assets/images/bg-chart-anies.svg')
+                drawChart(chart3, createData(sentimentGanjar), 'assets/images/bg-chart-ganjar.svg')
+                drawChart(chart4, createData(sentimentPuan), 'assets/images/bg-chart-puan.svg')
+            },
+            error: function (XMLHttpRequest, textStatus, _) {
+                alert(textStatus)
+                $('#last-update').text('Last update: N/A')
+                drawChart(chart1, createData([0, 0]), 'assets/images/bg-chart-prabowo.svg')
+                drawChart(chart2, createData([0, 0]), 'assets/images/bg-chart-anies.svg')
+                drawChart(chart3, createData([0, 0]), 'assets/images/bg-chart-ganjar.svg')
+                drawChart(chart4, createData([0, 0]), 'assets/images/bg-chart-puan.svg')
+            }
+        })
+    });
 </script>
 </body>
 
